@@ -1,4 +1,5 @@
 import axios from 'axios'
+import swal from 'sweetalert';
 export default{
   namespaced:true,
   state: {
@@ -28,8 +29,10 @@ export default{
         let response = await axios.post('/auth/signin',{
             email:credentials.email,
             password:credentials.password,
+          }).catch(error=>{
+              console.log('Error:',error);
+              swal("Fail! Invalid Credentials", "Kindly insert valid data in form.", "error");
           })
-        //   .then(res=>{console.log('Res:',res);}).catch(error=>{console.log('Error:',error);})
 
           console.log('Response',response);
          return dispatch('attempt',response.data.token)

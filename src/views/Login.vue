@@ -29,6 +29,7 @@
 
 
 <script>
+  import swal from 'sweetalert';
   import {mapActions} from 'vuex'
   export default {
     data(){
@@ -57,6 +58,7 @@
              name:'Dashboard'
            }).catch(()=>{
              console.log('Attempt Failed');
+             swal("Login Failed", "Kindly insert valid data in form.", "error");
            })
          })
       }

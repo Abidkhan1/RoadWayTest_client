@@ -5,23 +5,33 @@
     </div>
       <div class="row m-5 px-5">
         <div class="col-md-6">
-          <input type="text" class="form-control" v-model="taskName">
+            <label for="task">Title</label>
+          <input type="text" class="form-control" v-model="title">
+          <span v-if="errors.title" style="color:red;">{{errors.title[0]}}</span>
         </div>
-        <div class="col-md-2">
-          <button class="btn btn-md btn-warning" @click.prevent="updateTask">UPDATE</button>
+        <div class="col-md-6">
+            <label for="description">Description</label>
+          <input type="text" class="form-control" v-model="description">
+          <span v-if="errors.description" style="color:red;">{{errors.description[0]}}</span>
         </div>
       </div> 
+      <div class="row m-5 px-5">
+          <button class="btn btn-md btn-warning" @click.prevent="updateTask">UPDATE</button>
+      </div>
   </div>
 </template>
 
 <script>
  import axios from 'axios'
+ import swal from 'sweetalert';
   export default {
       props:['id'],
     data() {
       return {
-        taskName: '',
+        title: '',
+        description:'',
         taskId:this.id,
+        errors:[],
       }
     },//data
 
@@ -31,7 +41,8 @@
         .then(response => {
             console.log('Response:',response);
             this.taskId = response.data.todo.id;
-            this.taskName = response.data.todo.task;
+            this.title = response.data.todo.title;
+            this.description = response.data.todo.description;
         }).catch(error => {
             console.log('Error:',error);
         })
@@ -41,15 +52,20 @@
 
       async updateTask(){
         await axios.put(`todos/${this.taskId}`,{
-          task : this.taskName,
+          title : this.title,
+          description:this.description
         }).then(res=>{
           console.log('Response:',res.data);
-          this.$router.replace({
+          swal("Well Done!!", "Task updated successfully.", "success").then(() => {
+            this.$router.replace({
              name:'Dashboard'
-          })
-          
-        }).catch(err=>{
-          console.log('Error:',err);
+            })
+          });
+           
+        }).catch(error=>{
+          console.log('Error:',error);
+          this.errors = error.response.data.errors;
+          swal("Error", "Kindly insert valid data in form.", "error");
         })
         
       },//addNewTask
