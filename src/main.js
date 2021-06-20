@@ -11,6 +11,9 @@ import 'bootstrap-vue/dist/bootstrap-vue.css'
 Vue.use(BootstrapVue)
 Vue.use(BootstrapVueIcons)
 
+Vue.use(require('vue-resource'));
+Vue.component('infinite-loading', require('vue-infinite-loading'));
+
 require('@/store/subscriber')
 
 axios.defaults.baseURL = 'http://127.0.0.1:8000/api'

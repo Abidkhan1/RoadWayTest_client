@@ -16,7 +16,6 @@ const routes = [
     //       name: 'Dashboard'
     //     })
     //   }
-
     //   next()
     // }
   },
@@ -30,7 +29,6 @@ const routes = [
           name: 'Login'
         })
       }
-
       next()
     }
   },

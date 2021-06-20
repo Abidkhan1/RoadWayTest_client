@@ -11,7 +11,7 @@
           <input class="form-control" type="text" v-model="searchQuery" placeholder="Search" />
         </div>                        
       </div>
-      <div class="row mx-5 px-5" style="max-height: 400px;overflow-y: scroll;">
+      <div class="row mx-5 px-5 infinite-wrapper" style="max-height: 400px;overflow-y: scroll;">
       <table class="table">
         <thead>
           <tr>
@@ -36,20 +36,27 @@
           </tr>
         </tbody>
       </table>
+      <infinite-loading spinner="waveDots" force-use-infinite-wrapper=".infinite-wrapper" @distance="1" @infinite="infiniteHandler"></infinite-loading>
     </div>  
   </div>
 </template>
 
 <script>
  import axios from 'axios'
- import swal from 'sweetalert';
+ import swal from 'sweetalert'
+ import InfiniteLoading from 'vue-infinite-loading';
   export default {
     data() {
       return {
         searchQuery:'',
-        items: []
+        items: [],
+        page: 1,
       }
     },//data
+
+    components: {
+            InfiniteLoading,
+        },
 
     computed: {
       filteredItems(){
@@ -68,13 +75,31 @@
       axios.get('todos')
       .then(response => {
         console.log('Response:',response);
-        this.items = response.data.todos;
+        this.items = response.data.data;
+        // this.items = response.data.todos;
       }).catch(error=>{
         console.log('Error:',error);
       })
     },//mounted
 
     methods:{
+
+    infiniteHandler($state) {
+        let vm = this;
+
+        axios.get('/todos?page='+this.page)
+            .then(response => {
+              console.log('REs:',response);
+              response.data.data.forEach((item) => {
+                console.log('Item:',item);
+                vm.items.push(item);
+              })
+                
+                $state.loaded();
+            });
+
+        this.page = this.page + 1;
+    },//infiniteHandler
 
     deleteTodo(id){
       axios.delete(`todos/${id}`).then(response=>{
